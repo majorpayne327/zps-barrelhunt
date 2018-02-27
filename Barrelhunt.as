@@ -9,6 +9,7 @@ const int TEAM_HUMAN = 2;
 const int TEAM_ZOMBIE = 3;
 
 bool enabled = false;
+bool debug = true;
 
 void PluginInit() {
 
@@ -18,12 +19,15 @@ void PluginInit() {
 	PluginData.SetVersion( "2.0.0" );
 	
 	Engine.PrecacheFile( model, "models/props_c17/oildrum001.mdl" );
+	
 	Events::Player::OnPlayerSpawn.Hook( @OnPlayerSpawn );
+	Events::Player::OnPlayerInfected.Hook( @OnPlayerInfected );
 }
 
 void MapInit(){
 	if(Utils.StrContains("barrelhunt", Globals.CurrentMap())){
 		Engine.Log(notice, "[Barrelhunt] --- Enabling Barrelhunt");
+		
 		enabled = true;
 	}
 }
@@ -33,6 +37,14 @@ HookReturnCode OnPlayerSpawn(CHL2MP_Player@ pPlayer){
 		pPlayer.SetModel( "models/props_c17/oildrum001.mdl" );
 	}
 		
+	return HOOK_CONTINUE;
+}
+
+HookReturnCode OnPlayerInfected(CHL2MP_Player@ pPlayer, bool& in bIsCompleted){
+	if(enabled && bIsCompleted) {
+		pPlayer.SetModel( "models/props_c17/oildrum001.mdl" );
+	}
+
 	return HOOK_CONTINUE;
 }
 
